@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Player</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="music-player">
+    <h1>Music Player</h1>
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Search music...">
+    </div>
+    <div class="playlist">
+      <ul id="playlist">
+        <!-- Playlist items will be dynamically added here -->
+      </ul>
+    </div>
+    <div class="controls">
+      <button id="prev">Prev</button>
+      <button id="play-pause">Play</button>
+      <button id="next">Next</button>
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+    </div>
+    <audio id="audio-player"></audio>
+  </div>
+  <script src="scripts.js"></script>
+
+  <style>body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  .music-player {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  .search-bar {
+    margin-bottom: 20px;
+  }
+  
+  #search {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .playlist {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  }
+  
+  .playlist ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .playlist li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+  }
+  
+  .playlist li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  button {
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  input[type="range"] {
+    flex: 1;
+    margin-left: 10px;
+  }
+  
+  </style>
+  <script>
+    const songs = [
+  { title: 'Song 1', url: "C:\Users\venum\OneDrive\Documents\song2.mp3" },
+  { title: 'Song 2', url: "C:\Users\venum\OneDrive\Documents\song 3.mp3" },
+  { title: 'Song 3', url: "C:\Users\venum\OneDrive\Documents\song1.mp3" }
+];
+
+let currentSongIndex = 0;
+const audioPlayer = document.getElementById('audio-player');
+const playPauseButton = document.getElementById('play-pause');
+const playlistElement = document.getElementById('playlist');
+const searchInput = document.getElementById('search');
+const volumeControl = document.getElementById('volume');
+
+// Load playlist
+function loadPlaylist() {
+  playlistElement.innerHTML = '';
+  songs.forEach((song, index) => {
+    const li = document.createElement('li');
+    li.textContent = song.title;
+    li.addEventListener('click', () => playSong(index));
+    playlistElement.appendChild(li);
+  });
+}
+
+// Play song
+function playSong(index) {
+  currentSongIndex = index;
+  audioPlayer.src = songs[currentSongIndex].url;
+  audioPlayer.play();
+  updatePlayPauseButton();
+}
+
+// Update play/pause button
+function updatePlayPauseButton() {
+  if (audioPlayer.paused) {
+    playPauseButton.textContent = 'Play';
+  } else {
+    playPauseButton.textContent = 'Pause';
+  }
+}
+
+// Play/Pause button click event
+playPauseButton.addEventListener('click', () => {
+  if (audioPlayer.paused) {
+    audioPlayer.play();
+  } else {
+    audioPlayer.pause();
+  }
+  updatePlayPauseButton();
+});
+
+// Previous song
+document.getElementById('prev').addEventListener('click', () => {
+  currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+  playSong(currentSongIndex);
+});
+
+// Next song
+document.getElementById('next').addEventListener('click', () => {
+  currentSongIndex = (currentSongIndex + 1) % songs.length;
+  playSong(currentSongIndex);
+});
+
+// Volume control
+volumeControl.addEventListener('input', (e) => {
+  audioPlayer.volume = e.target.value;
+});
+
+// Search functionality
+searchInput.addEventListener('input', (e) => {
+  const searchTerm = e.target.value.toLowerCase();
+  const filteredSongs = songs.filter(song => song.title.toLowerCase().includes(searchTerm));
+  playlistElement.innerHTML = '';
+  filteredSongs.forEach((song, index) => {
+    const li = document.createElement('li');
+    li.textContent = song.title;
+    li.addEventListener('click', () => playSong(index));
+    playlistElement.appendChild(li);
+  });
+});
+
+// Initial load
+loadPlaylist();
+updatePlayPauseButton();
+audioPlayer.volume = 0.5;
+
+  </script>
+</body>
+</html>
